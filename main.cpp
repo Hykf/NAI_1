@@ -1,9 +1,8 @@
 #include <iostream>
-#include "Board.h"
+#include "GameManager.h"
 
 int main() {
     std::cout << "Hello, World!" << std::endl;
-    Board board{};
-    board.displayBoard();
+    GameManager game{};
     return 0;
 }
