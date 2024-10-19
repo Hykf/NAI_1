@@ -5,15 +5,15 @@
 
 struct GameManager {
 
-    GameManager(){ gameLoop();}
+    GameManager(){gameLoop();}
     GameManager(bool aiStart): bAiStart{aiStart} {gameLoop();}; //TODO przyda sie jak z konsoli bedzie odpalane
 
     int tura{0};
     bool bPlaying = true;
     bool bAiStart = false;
+    Board gameBoard;
 
     void gameLoop();
-    Board gameBoard;
 
 };
 

@@ -8,7 +8,7 @@ void GameManager::gameLoop() {
     std::cout<< "FIRST TURN: "<< ((bAiStart)?"Player":"AI") <<std::endl;
     gameBoard.displayBoard();
 
-    while (bPlaying){
+    while (gameBoard.bIsPlaying){
 
         std::cout<< "Tura gracza: "<< (((tura+bAiStart)%2==0)?"Red":"Blue") <<std::endl;
         std::cout<< "Which collumn?: ";

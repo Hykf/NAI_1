@@ -6,6 +6,14 @@
 #endif
 
 void Board::displayBoard() {
+
+#ifdef _WIN32
+    setConsoleColor(7);
+#else
+    setConsoleColor("\033[48;5;7m");  // Ustaw tło na szare
+        std::cout << "\033[0m";  // Resetowanie kolorów
+#endif
+
     char letter = 65;
 
     for(auto row : GameBoard) {
@@ -16,10 +24,10 @@ void Board::displayBoard() {
                     std::cout << "  " << " ";
                     break;
                 case RED:
-                    std::cout << "R " << " ";
+                    sayInColor(31,"O  ");
                     break;
                 case BLUE:
-                    std::cout << "B " << " "; //TODO dorobic kolory w konsoli
+                    sayInColor(34,"O  ");
                     break;
             }
 
@@ -41,6 +49,13 @@ bool Board::addPawn(int column, PlayerColor playerColor) {
     for (int row = 5; row >= 0; --row) {
         if (GameBoard[row][column].getPlayerColor() == EMPTY_SLOT) {
             GameBoard[row][column] = Pawn(playerColor);
+
+
+            if (checkForWinner(row, column, playerColor)) {
+                std::cout << "Player " << (playerColor == RED ? "Red" : "Blue") << " wins!\n";
+                bIsPlaying = false;
+            }
+
             return true;
         }
     }
@@ -48,6 +63,74 @@ bool Board::addPawn(int column, PlayerColor playerColor) {
     std::cout << "Column is full!\n";
     return false;
 
+}
+
+bool Board::checkForWinner(int lastRow, int lastCol, PlayerColor currentPlayer) {
+
+    //POZIOM
+    int count = 0;
+    for (int col = 0; col < 7; ++col) {
+        if (GameBoard[lastRow][col].getPlayerColor() == currentPlayer) {
+            count++;
+            if (count == 4) return true;
+        } else {
+            count = 0;
+        }
+    }
+
+    //PION
+    count = 0;
+    for (int row = 0; row < 6; ++row) {
+        if (GameBoard[row][lastCol].getPlayerColor() == currentPlayer) {
+            count++;
+            if (count == 4) return true;
+        } else {
+            count = 0;
+        }
+    }
+
+    // D
+    count = 0;
+    for (int i = -3; i <= 3; ++i) {
+        int row = lastRow + i;
+        int col = lastCol + i;
+        if (row >= 0 && row < 6 && col >= 0 && col < 7) {
+            if (GameBoard[row][col].getPlayerColor() == currentPlayer) {
+                count++;
+                if (count == 4) return true;
+            } else {
+                count = 0;
+            }
+        }
+    }
+
+    count = 0;
+    for (int i = -3; i <= 3; ++i) {
+        int row = lastRow + i;
+        int col = lastCol - i;
+        if (row >= 0 && row < 6 && col >= 0 && col < 7) {
+            if (GameBoard[row][col].getPlayerColor() == currentPlayer) {
+                count++;
+                if (count == 4) return true;
+            } else {
+                count = 0;
+            }
+        }
+    }
+
+    return false;
+}
+
+void Board::setColor(int textColor) {
+    std::cout << "\033[" << textColor << "m";
+}
+
+void Board::resetColor() { std::cout << "\033[0m"; }
+
+void Board::sayInColor(int textColor, std::string text) {
+    setColor(textColor);
+    std::cout<< text;
+    resetColor();
 }
 
 

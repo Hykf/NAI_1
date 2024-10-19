@@ -14,9 +14,15 @@
 struct Board {
 
 std::array<std::array<Pawn,7>,6> GameBoard;
+bool bIsPlaying = true;
 
-void displayBoard();
-bool addPawn(int column, PlayerColor playerColor);
+    void displayBoard();
+    bool addPawn(int column, PlayerColor playerColor);
+    bool checkForWinner(int lastRow, int lastCol, PlayerColor currentPlayer);
+
+    void setColor(int textColor);
+    void sayInColor(int textColor,std::string text);
+    void resetColor();
 
 #ifdef _WIN32
     void setConsoleColor(int color) {
