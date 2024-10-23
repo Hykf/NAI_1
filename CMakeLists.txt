@@ -13,4 +13,8 @@ add_executable(NAI_1
         Pawn.h
         GameManager.cpp
         GameManager.h
-        PlayerColor.h)
+        PlayerColor.h
+        Ai.cpp
+        Ai.h
+        Config.cpp
+        Config.h)

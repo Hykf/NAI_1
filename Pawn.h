@@ -8,7 +8,7 @@ Pawn() : playerColor(EMPTY_SLOT) {}
 Pawn(PlayerColor _playerColor) : playerColor{_playerColor} {}
 
 bool isPlayerPawn = false;
-PlayerColor getPlayerColor();
+PlayerColor getPlayerColor() const;
 
 private:
     PlayerColor playerColor;

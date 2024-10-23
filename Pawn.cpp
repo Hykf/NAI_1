@@ -1,5 +1,5 @@
 #include "Pawn.h"
 
-PlayerColor Pawn::getPlayerColor() {
+PlayerColor Pawn::getPlayerColor() const {
     return playerColor;
 }
