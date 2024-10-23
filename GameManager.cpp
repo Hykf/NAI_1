@@ -17,8 +17,13 @@ void GameManager::gameLoop() {
             Board::sayInColor(34, "Blue");
         }
         std::cout << std::endl;
-        std::cout<< "Which collumn?: ";
-        std::cin>> newTurnColumn;
+        std::cout << "Which column?: ";
+        if (!(std::cin >> newTurnColumn)) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid input. Please enter a valid column number." << std::endl;
+            continue;
+        }
 
         if((tura+bAiStart)%2==0){
             if(!gameBoard.addPawn(newTurnColumn,RED))
