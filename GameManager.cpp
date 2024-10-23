@@ -2,24 +2,27 @@
 #include "Ai.h"
 #include "Config.h"
 #include <iostream>
+#include <limits>
 
 void GameManager::gameLoop() {
-
     int newTurnColumn;
-    const bool bAiStart = (Config::TURN+bAiStart)%2==0;
-    std::cout<< "FIRST TURN: "<< ((bAiStart)?"Player":"AI") <<std::endl;
+    const bool AISTART = (bAiStart)%2==0;
+    std::cout<< "FIRST TURN: ";
+    if ((Config::TURN+AISTART)%2==0)
+        Board::sayInColor(31,"Red (Human)");
+    else
+        Board::sayInColor(34, "Blue (Computer)3");
+    std::cout<< "\n";
     gameBoard.displayBoard();
 
     while (gameBoard.bIsPlaying){
-
-        std::cout<< "Tura gracza: ";
-        if ((Config::TURN+bAiStart)%2==0) {
+        if ((Config::TURN+AISTART)%2==0)
             Board::sayInColor(31,"Red (Human)");
-        } else {
-            Board::sayInColor(34, "Blue (Computer)3");
-        }
-        std::cout << std::endl;
-        if((Config::TURN+bAiStart)%2==0){
+        else
+            Board::sayInColor(34, "Blue (Computer)");
+        std::cout <<" 's turn"<< std::endl;
+
+        if((Config::TURN+AISTART)%2==0){
             std::cout << "Which column?: ";
             if (!(std::cin >> newTurnColumn)) {
                 std::cin.clear();
@@ -34,12 +37,9 @@ void GameManager::gameLoop() {
             if(!gameBoard.addPawn(newTurnColumn,BLUE))
                 continue;
         }
-
         gameBoard.displayBoard();
         Config::updateTurn();
-
     }
-
 }
 
 

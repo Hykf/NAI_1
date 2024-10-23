@@ -6,14 +6,12 @@
 struct GameManager {
 
     GameManager(){gameLoop();}
-    GameManager(bool aiStart): bAiStart{aiStart} {gameLoop();}; //TODO przyda sie jak z konsoli bedzie odpalane
+    GameManager(bool aiStart): bAiStart{aiStart} {gameLoop();};
 
-    bool bPlaying = true;
     bool bAiStart = false;
     Board gameBoard;
 
     void gameLoop();
-
 };
 
 #endif //NAI_1_GAMEMANAGER_H

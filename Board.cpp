@@ -1,18 +1,7 @@
 #include "Board.h"
 #include <iostream>
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
 void Board::displayBoard() {
-
-#ifdef _WIN32
-    setConsoleColor(7);
-#else
-    setConsoleColor("\033[48;5;7m");  // Ustaw tło na szare
-        std::cout << "\033[0m";  // Resetowanie kolorów
-#endif
 
     char letter = 65;
 
@@ -49,20 +38,15 @@ bool Board::addPawn(int column, PlayerColor playerColor) {
     for (int row = 5; row >= 0; --row) {
         if (GameBoard[row][column].getPlayerColor() == EMPTY_SLOT) {
             GameBoard[row][column] = Pawn(playerColor);
-
-
             if (checkForWinner(row, column, playerColor)) {
                 std::cout << "Player " << (playerColor == RED ? "Red" : "Blue") << " wins!\n";
                 bIsPlaying = false;
             }
-
             return true;
         }
     }
-
     std::cout << "Column is full!\n";
     return false;
-
 }
 
 bool Board::checkForWinner(int lastRow, int lastCol, PlayerColor currentPlayer) {
@@ -117,7 +101,6 @@ bool Board::checkForWinner(int lastRow, int lastCol, PlayerColor currentPlayer) 
             }
         }
     }
-
     return false;
 }
 

@@ -1,4 +1,3 @@
-
 #ifndef NAI_1_PLAYERCOLOR_H
 #define NAI_1_PLAYERCOLOR_H
 

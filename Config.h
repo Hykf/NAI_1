@@ -1,7 +1,3 @@
-//
-// Created by mechlon on 23.10.24.
-//
-
 #ifndef NAI_1_CONFIG_H
 #define NAI_1_CONFIG_H
 
