@@ -10,7 +10,13 @@ void GameManager::gameLoop() {
 
     while (gameBoard.bIsPlaying){
 
-        std::cout<< "Tura gracza: "<< (((tura+bAiStart)%2==0)?"Red":"Blue") <<std::endl;
+        std::cout<< "Tura gracza: ";
+        if ((tura+bAiStart)%2==0) {
+            Board::sayInColor(31,"Red");
+        } else {
+            Board::sayInColor(34, "Blue");
+        }
+        std::cout << std::endl;
         std::cout<< "Which collumn?: ";
         std::cin>> newTurnColumn;
 

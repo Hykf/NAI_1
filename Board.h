@@ -20,9 +20,9 @@ bool bIsPlaying = true;
     bool addPawn(int column, PlayerColor playerColor);
     bool checkForWinner(int lastRow, int lastCol, PlayerColor currentPlayer);
 
-    void setColor(int textColor);
-    void sayInColor(int textColor,std::string text);
-    void resetColor();
+    static void setColor(int textColor);
+    static void sayInColor(int textColor,std::string text);
+    static void resetColor();
 
 #ifdef _WIN32
     void setConsoleColor(int color) {
