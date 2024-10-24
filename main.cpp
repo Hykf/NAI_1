@@ -1,7 +1,8 @@
 /*
 
-#Zasady: https://docs.google.com/spreadsheets/d/1yJF8SJIqf_2GHLcLyx-9ye85514xuBA7_wA-1tirqL0/edit?gid=0#gid=0
 #Autorzy: Mateusz Wróbel & Paweł Mechliński
+#Repo: https://github.com/Hykf/NAI_1
+#Zasady: https://docs.google.com/spreadsheets/d/1yJF8SJIqf_2GHLcLyx-9ye85514xuBA7_wA-1tirqL0/edit?gid=0#gid=0
 #Dokumentacja: html/index.html
 #Przygotowanie: [Opcjonalnie] jeśli gracz ma zaczynac rozgrywke to mona uruchomic program z flaga -p
 
