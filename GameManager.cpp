@@ -11,7 +11,7 @@ void GameManager::gameLoop() {
     if ((Config::TURN+AISTART)%2==0)
         Board::sayInColor(31,"Red (Human)");
     else
-        Board::sayInColor(34, "Blue (Computer)3");
+        Board::sayInColor(34, "Blue (Computer)");
     std::cout<< "\n";
     gameBoard.displayBoard();
 
