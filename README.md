@@ -2,7 +2,7 @@
 
 #Autorzy: Mateusz Wróbel & Paweł Mechliński
 
-#Przygotowanie: [Opcjonalnie] jeśli gracz ma zaczynac rozgrywke to mona uruchomic program z flaga -p
+#Przygotowanie: [Opcjonalnie] jeśli gracz ma zaczynać rozgrywkę to można uruchomić program z flaga -p
 
 ![image](https://github.com/user-attachments/assets/e171b8f0-8e75-462c-b45e-423a95cd9b5c)
 
@@ -14,3 +14,5 @@ Gameplay: W grze Connect Four gracz rywalizuje z AI, próbując ułożyć cztery
 
 
 ![image](https://github.com/user-attachments/assets/ac5a82fb-3a86-42e3-b577-ecfeadb365d4)
+
+Implementacja Sztucznej Inteligencji: Gracz komputerowy wybiera optymalny ruch analizując możliwości dla danego układu planszy za pomocą algorytmu mini-max z pruningiem alpha-beta: analizowane są poszczególne możliwości rozwoju rozgrywki, którym przypisywana jest punktacja. Domyślną głębokością analizy rekursywnej jest 5.  
