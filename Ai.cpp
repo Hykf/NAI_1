@@ -3,6 +3,18 @@
 
 using namespace std;
 
+/*
+Converts a 2D array of Pawn objects into a 2D vector of integers, where each integer represents the player's color.
+
+    @Parameters:
+    pawns (const std::array<std::array<Pawn, 7>, 6>&): A 2D array of Pawn objects representing the game board.
+
+    Returns:
+    std::vector<std::vector<int>>: A 2D vector of integers where:
+        0 - represents an empty slot,
+        1 - represents a red pawn (player),
+        2 - represents a blue pawn (computer).
+*/
 std::vector<std::vector<int>> Ai::pawnsToInt(const std::array<std::array<Pawn, 7>, 6>& pawns) {
     // Initialize the output 2D vector of integers with the same dimensions
     std::vector<std::vector<int>> result(6, std::vector<int>(7));
@@ -31,6 +43,17 @@ std::vector<std::vector<int>> Ai::pawnsToInt(const std::array<std::array<Pawn, 7
     return result; // Return the new 2D vector of integers
 }
 
+/*
+Calculates a heuristic score based on the number of player's and opponent's pawns in a given line.
+
+    @Parameters:
+    g (unsigned int): The count of the player's pawns (e.g., red) in the line.
+    b (unsigned int): The count of the opponent's pawns (e.g., blue) in the line.
+    z (unsigned int): The count of empty slots in the line.
+
+    Returns:
+    int: Returns a heuristic score based on the configuration of the pawns. A higher score indicates a favorable position for the player, while a lower score indicates a disadvantage.
+*/
 int heurFunction(unsigned int g, unsigned int b, unsigned int z) {
     int score = 0;
     if (g == 4) { score += 500001; } // preference to go for winning move vs. block
@@ -42,6 +65,16 @@ int heurFunction(unsigned int g, unsigned int b, unsigned int z) {
     return score;
 }
 
+/*
+Evaluates a score based on the configuration of pawns in a given vector.
+
+    @Parameters:
+    v (vector<unsigned int>): A vector representing the current state of pawns, where each element indicates the pawn's color (or empty).
+    p (unsigned int): The player's color being evaluated (e.g., red or blue).
+
+    Returns:
+    int: Returns a heuristic score calculated using the counts of the player's pawns, opponent's pawns, and empty spots in the vector.
+*/
 int scoreSet(vector<unsigned int> v, unsigned int p) {
     unsigned int good = 0; // points in favor of p
     unsigned int bad = 0; // points against p
@@ -56,6 +89,16 @@ int scoreSet(vector<unsigned int> v, unsigned int p) {
     return heurFunction(good, bad, empty);
 }
 
+/*
+Calculates a score based on the arrangement of pawns in a 2D game board.
+
+    @Parameters:
+    b (vector<vector<int>>): A 2D vector representing the game board, where each element indicates the pawn's color (or empty).
+    p (unsigned int): The player's color being evaluated (e.g., red or blue).
+
+    Returns:
+    int: Returns the total heuristic score based on sequences of 4 pawns in rows, columns, and diagonals that are evaluated using the scoreSet function.
+*/
 int tabScore(vector<vector<int> > b, unsigned int p) {
     int score = 0;
     vector<unsigned int> rs(Config::NUM_COL);
@@ -114,6 +157,16 @@ int tabScore(vector<vector<int> > b, unsigned int p) {
     return score;
 }
 
+/*
+Checks if the given player has a winning move on the game board by looking for sequences of 4 adjacent pieces.
+
+    @Parameters:
+    b (vector<vector<int>>&): A 2D vector representing the game board, where each element indicates the pawn's color (or empty).
+    p (unsigned int): The player's color being evaluated (e.g., red or blue).
+
+    Returns:
+    bool: Returns true if there is a winning move for the player; otherwise, returns false.
+*/
 bool winningMove(vector<vector<int> > &b, unsigned int p) {
     unsigned int winSequence = 0; // to count adjacent pieces
     // for horizontal checks
@@ -166,6 +219,15 @@ bool winningMove(vector<vector<int> > &b, unsigned int p) {
     return false; // otherwise no winning move
 }
 
+/*
+Creates a copy of the provided game board.
+
+    @Parameters:
+    b (vector<vector<int>>): A 2D vector representing the game board to be copied.
+
+    Returns:
+    vector<vector<int>>: A new 2D vector that is a copy of the input game board.
+*/
 vector<vector<int> > copyBoard(vector<vector<int> > b) {
     vector<vector<int>> newBoard(Config::NUM_ROW, vector<int>(Config::NUM_COL));
     for (unsigned int r = 0; r < Config::NUM_ROW; r++) {
@@ -176,6 +238,17 @@ vector<vector<int> > copyBoard(vector<vector<int> > b) {
     return newBoard;
 }
 
+/*
+Places a player's piece in the specified column of the game board.
+
+    @Parameters:
+    b (vector<vector<int>>&): A reference to a 2D vector representing the game board.
+    c (int): The column index where the piece will be placed.
+    p (unsigned int): The player identifier for the piece being placed.
+
+    Returns:
+    void: This function does not return a value.
+*/
 void makeMove(vector<vector<int> >& b, int c, unsigned int p) {
     // start from bottom of board going up
     for (unsigned int r = 0; r < Config::NUM_ROW; r++) {
@@ -186,6 +259,19 @@ void makeMove(vector<vector<int> >& b, int c, unsigned int p) {
     }
 }
 
+/*
+Implements the MiniMax algorithm with alpha-beta pruning to evaluate game moves for AI.
+
+    @Parameters:
+    integerBoard (vector<vector<int>>): The current state of the game board represented as a 2D vector of integers.
+    maxDepth (unsigned int): The maximum depth to search in the game tree.
+    alf (int): The current alpha value, representing the best score for the maximizing player.
+    bet (int): The current beta value, representing the best score for the minimizing player.
+    p (unsigned int): The identifier for the current player (either COMPUTER or PLAYER).
+
+    Returns:
+    array<int, 2>: An array containing the best score found and the column index of the move associated with that score.
+*/
 array<int, 2> Ai::miniMax(vector<vector<int>> integerBoard, unsigned int maxDepth, int alf, int bet, unsigned int p) {
 //    const array<array<Pawn, 7>, 6>& pawns = gameBoard.GameBoard;
 //    vector<vector<int>> integerBoard = Ai::transformPawnsToInt(pawns);
@@ -233,6 +319,15 @@ array<int, 2> Ai::miniMax(vector<vector<int>> integerBoard, unsigned int maxDept
     }
 }
 
+/*
+Converts a 2D vector of integers representing the game board back into a 2D array of Pawn objects.
+
+    @Parameters:
+    integerBoard (const std::vector<std::vector<int>>): A 2D vector where each integer represents a specific type of pawn or an empty slot.
+
+    @Returns:
+    std::array<std::array<Pawn, 7>, 6>&: A reference to a 2D array of Pawn objects representing the state of the game board.
+*/
 std::array<std::array<Pawn, 7>, 6> &Ai::intToPawn(const std::vector<std::vector<int>> integerBoard) {
         std::array<std::array<Pawn, 7>, 6> pawns;
 
@@ -260,6 +355,15 @@ std::array<std::array<Pawn, 7>, 6> &Ai::intToPawn(const std::vector<std::vector<
         return pawns; // Return the new 2D array of Pawns
     }
 
+/*
+Calculates the best move for the AI player using the MiniMax algorithm.
+
+@Parameters:
+Board b: The current state of the game board, containing the positions of the pawns.
+
+@Returns:
+int: The column index where the AI player should make its move.
+*/
 int Ai::calculateMove(Board b) {
     vector<vector<int>> integerBoard = Ai::pawnsToInt(b.GameBoard);
     return miniMax(integerBoard, Config::MAX_DEPTH, 0 - INT_MAX, INT_MAX, Config::COMPUTER)[1];

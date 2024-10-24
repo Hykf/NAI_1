@@ -24,18 +24,6 @@ bool bIsPlaying = true;
     static void sayInColor(int textColor,std::string text);
     static void resetColor();
 
-#ifdef _WIN32
-    void setConsoleColor(int color) {
-        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
-    }
-#else
-    void setConsoleColor(const std::string& color) {
-        std::cout << color;
-    }
-#endif
-
 };
-
-
 
 #endif //BOARD_H

@@ -2,8 +2,6 @@
 
 #Autorzy: Mateusz Wróbel & Paweł Mechliński
 
-#Dokumentacja: html/index.html
-
 #Przygotowanie: [Opcjonalnie] jeśli gracz ma zaczynac rozgrywke to mona uruchomic program z flaga -p
 
 ![image](https://github.com/user-attachments/assets/e171b8f0-8e75-462c-b45e-423a95cd9b5c)

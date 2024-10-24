@@ -4,6 +4,10 @@
 #include <iostream>
 #include <limits>
 
+/*
+Game loop for managing turns between the human player and AI in the Connect Four game.
+Handles input, checks for validity, and updates the game state accordingly.
+*/
 void GameManager::gameLoop() {
     int newTurnColumn;
     const bool AISTART = (bAiStart)%2==0;
