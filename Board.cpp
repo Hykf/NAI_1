@@ -1,20 +1,22 @@
 #include "Board.h"
 #include <iostream>
-
-/*
-Displays the current state of the game board in the console.
-
-    @Parameters:
-    None.
-
-    @Returns:
-    void: This function does not return a value. It directly outputs the game board's state to the console.
-
-    @Details:
-    The function iterates through the 2D array representing the game board and prints each row
-    with a corresponding letter (A, B, C, ...) to the left. Each cell displays a colored "O"
-    for player pieces (Red or Blue) or a dot for empty slots. Column numbers are printed
-    at the bottom for user reference.
+/**
+* @file Board.h 
+*/
+/** 
+* Displays the current state of the game board in the console.
+*
+*    @param
+*    None.
+*
+*    @return
+*    void: This function does not return a value. It directly outputs the game board's state to the console.
+*
+*    @brief
+*    The function iterates through the 2D array representing the game board and prints each row
+*    with a corresponding letter (A, B, C, ...) to the left. Each cell displays a colored "O"
+*    for player pieces (Red or Blue) or a dot for empty slots. Column numbers are printed
+*    at the bottom for user reference.
 */
 void Board::displayBoard() {
 
@@ -43,19 +45,19 @@ void Board::displayBoard() {
     std::cout<<"\n\n";
 }
 
-/*
-Adds a pawn of the specified player color to the specified column on the game board.
-
-    @Parameters:
-    int column: The column number (1 to 7) where the pawn should be added.
-    PlayerColor playerColor: The color of the player (RED or BLUE) whose pawn is being added.
-
-    @Returns:
-    bool: Returns true if the pawn was successfully added, false otherwise.
-
-    @Details:
-    Validates the column, finds the first empty slot from the bottom, and places the pawn.
-    Checks for a winner and ends the game if there is one.
+/**
+* Adds a pawn of the specified player color to the specified column on the game board.
+*
+*    @param
+*    int column: The column number (1 to 7) where the pawn should be added.
+*    PlayerColor playerColor: The color of the player (RED or BLUE) whose pawn is being added.
+*
+*    @return
+*    bool: Returns true if the pawn was successfully added, false otherwise.
+*
+*    @brief
+*    Validates the column, finds the first empty slot from the bottom, and places the pawn.
+*    Checks for a winner and ends the game if there is one.
 */
 bool Board::addPawn(int column, PlayerColor playerColor) {
 
@@ -78,19 +80,19 @@ bool Board::addPawn(int column, PlayerColor playerColor) {
     return false;
 }
 
-/*
-Checks if the current player has won the game by connecting four pawns in any direction.
-
-    @Parameters:
-    int lastRow: The row index of the last placed pawn.
-    int lastCol: The column index of the last placed pawn.
-    PlayerColor currentPlayer: The color of the player who made the last move.
-
-    @Returns:
-    bool: Returns true if the current player has won, false otherwise.
-
-    @Details:
-    Checks for four consecutive pawns horizontally, vertically, and diagonally.
+/**
+* Checks if the current player has won the game by connecting four pawns in any direction.
+*
+*    @param
+*    int lastRow: The row index of the last placed pawn.
+*    int lastCol: The column index of the last placed pawn.
+*    PlayerColor currentPlayer: The color of the player who made the last move.
+*
+*    @return
+*    bool: Returns true if the current player has won, false otherwise.
+*
+*    @brief
+*    Checks for four consecutive pawns horizontally, vertically, and diagonally.
 */
 bool Board::checkForWinner(int lastRow, int lastCol, PlayerColor currentPlayer) {
 
@@ -147,48 +149,48 @@ bool Board::checkForWinner(int lastRow, int lastCol, PlayerColor currentPlayer) 
     return false;
 }
 
-/*
-Sets the text color for console output.
-
-    @Parameters:
-    int textColor: The ANSI color code to set the text color.
-
-    @Returns:
-    void
-
-    @Details:
-    This function changes the text color in the console using ANSI escape codes.
+/**
+* Sets the text color for console output.
+*
+*    @param
+*    int textColor: The ANSI color code to set the text color.
+*
+*    @return
+*    void
+*
+*    @brief
+*    This function changes the text color in the console using ANSI escape codes.
 */
 void Board::setColor(int textColor) {
     std::cout << "\033[" << textColor << "m";
 }
 
-/*
-Resets the text color in the console to default.
-
-    @Parameters:
-    void
-
-    @Returns:
-    void
-
-    @Details:
-    This function resets the text color to the default console color using ANSI escape codes.
+/**
+* Resets the text color in the console to default.
+*
+*    @param
+*    void
+*
+*    @return
+*    void
+*
+*    @brief
+*    This function resets the text color to the default console color using ANSI escape codes.
 */
 void Board::resetColor() { std::cout << "\033[0m"; }
 
-/*
-Prints text in a specified color in the console.
-
-    @Parameters:
-    int textColor: The ANSI color code to set the text color.
-    std::string text: The text to be printed.
-
-    @Returns:
-    void
-
-    @Details:
-    This function changes the text color, prints the specified text, and then resets the color back to default.
+/**
+* Prints text in a specified color in the console.
+*
+*    @param
+*    int textColor: The ANSI color code to set the text color.
+*    std::string text: The text to be printed.
+*
+*    @return
+*    void
+*
+*    @brief
+*    This function changes the text color, prints the specified text, and then resets the color back to default.
 */
 void Board::sayInColor(int textColor, std::string text) {
     setColor(textColor);

@@ -3,10 +3,13 @@
 #include "Config.h"
 #include <iostream>
 #include <limits>
-
-/*
-Game loop for managing turns between the human player and AI in the Connect Four game.
-Handles input, checks for validity, and updates the game state accordingly.
+/**
+* @file GameManager.h
+*/
+/**
+* 
+* Game loop for managing turns between the human player and AI in the Connect Four game.
+* Handles input, checks for validity, and updates the game state accordingly.
 */
 void GameManager::gameLoop() {
     int newTurnColumn;
