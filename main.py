@@ -2,8 +2,31 @@ import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from imdb import Cinemagoer
 import webbrowser
-def generate_movie_html(movie_titles, output_file="movies.html"):
 
+
+def get_user_preferences():
+    preferences = {}
+    print("Enter your preferences (movie and rating)!")
+    print("Type 'end' to finish entering your preferences.")
+
+    while True:
+        movie = input("Enter movie name: ")
+        if movie.lower() == 'end':
+            break
+
+        try:
+            score = float(input(f"Enter rating for the movie '{movie}' (1 - 10): "))
+            score = max(1.0, min(10.0, score))
+            normalized_score = (score - 1.0) / 9.0
+            preferences[movie] = normalized_score
+            print("")
+        except ValueError:
+            print("Invalid value. Please enter a number between 1 and 10.")
+
+    return preferences
+
+
+def generate_movie_html(movie_titles, output_file="movies.html"):
     html_content = """
     <!DOCTYPE html>
     <html lang="en">
@@ -64,9 +87,8 @@ def generate_movie_html(movie_titles, output_file="movies.html"):
     """
 
     ia = Cinemagoer()
-    for title in movie_titles:
+    for title in movie_titles[0]:  # 0-GOOD  1-BAD
         try:
-
             movie = ia.search_movie(title[0])[0]
 
             movie_info = ia.get_movie(movie.movieID)
@@ -97,8 +119,8 @@ def generate_movie_html(movie_titles, output_file="movies.html"):
     print(f"HTML file generated: {output_file}")
     webbrowser.open("movies.html")
 
-def recommend_based_on_users(preferences, top_n=5):
 
+def recommend_based_on_users(preferences, top_n=5):
     new_user_vector = pd.DataFrame([preferences], columns=user_movie_matrix.columns).fillna(0)
     extended_matrix = pd.concat([user_movie_matrix, new_user_vector], ignore_index=True)
     extended_similarity = cosine_similarity(extended_matrix)
@@ -113,20 +135,26 @@ def recommend_based_on_users(preferences, top_n=5):
             if movie not in preferences and score > 0:
                 recommendations[movie] = recommendations.get(movie, 0) + similarity * score
 
-        if len(recommendations) >= top_n:
+        if len(recommendations) >= top_n * 2:
             break
 
     sorted_recommendations = sorted(recommendations.items(), key=lambda x: x[1], reverse=True)
-    return sorted_recommendations[:top_n]
+
+    top_n_best = sorted_recommendations[:top_n]
+
+    top_n_worst = sorted_recommendations[-top_n:]
+
+    return (top_n_best, top_n_worst)
+
 
 ####################
 
-preferences = {"matrix": 0.95, "brazil": 0.99 ,"taxi driver": 0.9, "wyjazd integracyjny": 0.02} ## Zamienic na input
-
+preferences = get_user_preferences()
 data = pd.read_csv("movies.csv")
 user_movie_matrix = data.pivot_table(index='Name', columns='Movie', values='Score')
 user_movie_matrix.fillna(0, inplace=True)
 user_similarity_matrix = cosine_similarity(user_movie_matrix)
-user_similarity_df = pd.DataFrame(user_similarity_matrix, index=user_movie_matrix.index, columns=user_movie_matrix.index)
-generate_movie_html(recommend_based_on_users(preferences))
+user_similarity_df = pd.DataFrame(user_similarity_matrix, index=user_movie_matrix.index,
+                                  columns=user_movie_matrix.index)
 
+generate_movie_html(recommend_based_on_users(preferences))
