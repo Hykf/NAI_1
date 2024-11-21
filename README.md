@@ -23,18 +23,25 @@ In both cases, the engine will analyze the input data and correlate them with th
 ![img.png](img.png)
 ![img_1.png](img_1.png)
 ![img_2.png](img_2.png)
-
+> _(Screenshots picture the UI evolution, but at the stage of frontend design, there were no changes made in the recommendation engine itself - so the differences are purely cosmetic)_
+ 
 ### Improved UI
 ![img_3.png](img_3.png)
 ![img_4.png](img_4.png)
 ![img_5.png](img_5.png)
 ![img_6.png](img_6.png)
+> Improved UI includes some CSS animated elements and AI generated logo for the application.
 
 ### Similarity scores
+#### Similarity metrics calculated for random User ratings set:
+![img_8.png](img_8.png)
+![img_9.png](img_9.png)
+> For users with no common ratings, the similarity is 0.
 
-
-
-_(Screenshots picture the UI evolution, but at the stage of frontend design, there were no changes made in the recommendation engine itself - so the differences are purely cosmetic)_
+#### Similiarity metrics calculated for Professor's scores set:
+![img_10.png](img_10.png)
+![img_11.png](img_11.png)
+> We can see that there is the biggest similarity for the original user's ratings which confirms that the algorithm works (somewhat) as expected. 
 
 ## Checkpoints before sending next homework
 - [x] Create recommendation engine.

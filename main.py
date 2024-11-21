@@ -80,17 +80,33 @@ def recommend_based_on_users(preferences, top_n=5):
     # Create a new DataFrame for the new user's preferences
     new_user_vector = pd.DataFrame([preferences], columns=user_movie_matrix.columns).fillna(0)
 
+    # DEBUGGING: Check the new user's vector
+    print("New User's Ratings (preferences):")
+    print(new_user_vector)
+
     # Extend the user-movie matrix with the new user's preferences
     extended_matrix = pd.concat([user_movie_matrix, new_user_vector], ignore_index=True)
+
+    # DEBUGGING: Check the extended matrix after adding the new user
+    print("\nExtended User-Movie Matrix:")
+    print(extended_matrix.tail())  # Check the last row which should be the new user
 
     # Calculate Cosine Similarity
     extended_cosine_similarity = cosine_similarity(extended_matrix)
     new_user_cosine_similarities = extended_cosine_similarity[-1][:-1]  # Exclude the new user's own similarity
 
+    # DEBUGGING: Check cosine similarities
+    print("\nCosine Similarities with New User:")
+    print(new_user_cosine_similarities)
+
     # Calculate Euclidean Similarity (inverse of Euclidean distance)
     extended_euclidean_distances = euclidean_distances(extended_matrix)
     new_user_euclidean_distances = extended_euclidean_distances[-1][:-1]  # Exclude the new user's own distance
     new_user_euclidean_similarities = 1 / (1 + new_user_euclidean_distances)  # Convert distance to similarity
+
+    # DEBUGGING: Check Euclidean similarities
+    print("\nEuclidean Similarities with New User:")
+    print(new_user_euclidean_similarities)
 
     # Combine both similarities into separate series for comparison
     similar_users_cosine = pd.Series(new_user_cosine_similarities, index=user_movie_matrix.index).sort_values(
@@ -99,11 +115,11 @@ def recommend_based_on_users(preferences, top_n=5):
         ascending=False)
 
     # Print both similarities for comparison
-    print("Cosine Similarity between new user and other users:")
-    print(similar_users_cosine)  # Display top N cosine similarities
+    print("\nCosine Similarity between new user and other users:")
+    print(similar_users_cosine)  # Display all cosine similarities
 
     print("\nEuclidean Similarity between new user and other users:")
-    print(similar_users_euclidean)  # Display top N euclidean similarities
+    print(similar_users_euclidean)  # Display all Euclidean similarities
 
     recommendations = {}
 
@@ -175,7 +191,7 @@ def get_preferences_from_csv(file_path):
                 movie = row[movie_idx]
                 score_str = row[rating_idx]
                 try:
-                    score = float(score_str)
+                    score = float(score_str) * 10
                     score = max(1.0, min(10.0, score))
                     normalized_score = (score - 1.0) / 9.0
                     preferences[movie] = normalized_score
