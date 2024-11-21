@@ -30,6 +30,10 @@ In both cases, the engine will analyze the input data and correlate them with th
 ![img_5.png](img_5.png)
 ![img_6.png](img_6.png)
 
+### Similarity scores
+
+
+
 _(Screenshots picture the UI evolution, but at the stage of frontend design, there were no changes made in the recommendation engine itself - so the differences are purely cosmetic)_
 
 ## Checkpoints before sending next homework

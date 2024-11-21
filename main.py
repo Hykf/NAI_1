@@ -1,5 +1,6 @@
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.metrics.pairwise import euclidean_distances
 from imdb import Cinemagoer
 import webbrowser
 import csv
@@ -67,7 +68,7 @@ def recommend_based_on_users(preferences, top_n=5):
     """
     Recommends movies based on user preferences by calculating similarities with other users.
 
-    The function computes cosine similarities between the new user's preferences and all existing users,
+    The function computes both cosine and Euclidean similarities between the new user's preferences and all existing users,
     and generates recommendations by considering movies rated highly by similar users that the new user has not rated.
 
     :param preferences: A dictionary of movie titles and normalized ratings provided by the new user.
@@ -76,19 +77,43 @@ def recommend_based_on_users(preferences, top_n=5):
               - top_n_best: A list of the top N recommended movies.
               - top_n_worst: A list of the top N movies the user should avoid based on recommendations.
     """
+    # Create a new DataFrame for the new user's preferences
     new_user_vector = pd.DataFrame([preferences], columns=user_movie_matrix.columns).fillna(0)
+
+    # Extend the user-movie matrix with the new user's preferences
     extended_matrix = pd.concat([user_movie_matrix, new_user_vector], ignore_index=True)
-    extended_similarity = cosine_similarity(extended_matrix)
-    new_user_similarities = extended_similarity[-1][:-1]
-    similar_users = pd.Series(new_user_similarities, index=user_movie_matrix.index).sort_values(ascending=False)
+
+    # Calculate Cosine Similarity
+    extended_cosine_similarity = cosine_similarity(extended_matrix)
+    new_user_cosine_similarities = extended_cosine_similarity[-1][:-1]  # Exclude the new user's own similarity
+
+    # Calculate Euclidean Similarity (inverse of Euclidean distance)
+    extended_euclidean_distances = euclidean_distances(extended_matrix)
+    new_user_euclidean_distances = extended_euclidean_distances[-1][:-1]  # Exclude the new user's own distance
+    new_user_euclidean_similarities = 1 / (1 + new_user_euclidean_distances)  # Convert distance to similarity
+
+    # Combine both similarities into separate series for comparison
+    similar_users_cosine = pd.Series(new_user_cosine_similarities, index=user_movie_matrix.index).sort_values(
+        ascending=False)
+    similar_users_euclidean = pd.Series(new_user_euclidean_similarities, index=user_movie_matrix.index).sort_values(
+        ascending=False)
+
+    # Print both similarities for comparison
+    print("Cosine Similarity between new user and other users:")
+    print(similar_users_cosine)  # Display top N cosine similarities
+
+    print("\nEuclidean Similarity between new user and other users:")
+    print(similar_users_euclidean)  # Display top N euclidean similarities
 
     recommendations = {}
-    for similar_user, similarity in similar_users.items():
+
+    # Generate recommendations based on cosine similarities
+    for similar_user, cosine_sim_value in similar_users_cosine.items():  # Renamed variable to avoid conflict
         user_ratings = user_movie_matrix.loc[similar_user]
 
         for movie, score in user_ratings.items():
             if movie not in preferences and score > 0:
-                recommendations[movie] = recommendations.get(movie, 0) + similarity * score
+                recommendations[movie] = recommendations.get(movie, 0) + cosine_sim_value * score
 
         if len(recommendations) >= top_n * 2:
             break
@@ -96,7 +121,6 @@ def recommend_based_on_users(preferences, top_n=5):
     sorted_recommendations = sorted(recommendations.items(), key=lambda x: x[1], reverse=True)
 
     top_n_best = sorted_recommendations[:top_n]
-
     top_n_worst = sorted_recommendations[-top_n:]
 
     return (top_n_best, top_n_worst)
