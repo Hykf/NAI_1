@@ -77,7 +77,6 @@ def recommend_based_on_users(preferences, top_n=5):
               - top_n_best: A list of the top N recommended movies.
               - top_n_worst: A list of the top N movies the user should avoid based on recommendations.
     """
-    # Create a new DataFrame for the new user's preferences
     new_user_vector = pd.DataFrame([preferences], columns=user_movie_matrix.columns).fillna(0)
 
     # DEBUGGING: Check the new user's vector
@@ -124,7 +123,7 @@ def recommend_based_on_users(preferences, top_n=5):
     recommendations = {}
 
     # Generate recommendations based on cosine similarities
-    for similar_user, cosine_sim_value in similar_users_cosine.items():  # Renamed variable to avoid conflict
+    for similar_user, cosine_sim_value in similar_users_cosine.items():
         user_ratings = user_movie_matrix.loc[similar_user]
 
         for movie, score in user_ratings.items():
@@ -154,11 +153,9 @@ def get_preferences_from_csv(file_path):
     :raises ValueError: If the file is not a CSV or lacks the required columns.
     :returns: A dictionary with movie titles as keys and normalized ratings as values.
     """
-    # Check if the file exists in the same directory
     if not os.path.isfile(file_path):
         raise FileNotFoundError(f"The file '{file_path}' does not exist in the current directory.")
 
-    # Check if the file has a .csv extension
     if not file_path.lower().endswith('.csv'):
         raise ValueError(f"The file '{file_path}' is not a CSV file.")
 
@@ -166,12 +163,10 @@ def get_preferences_from_csv(file_path):
     print("Input looks like a proper file. Trying to read it...")
 
     try:
-        # Read data from the CSV file
         with open(file_path, mode='r', encoding='utf-8') as csvfile:
             reader = csv.reader(csvfile)
 
-            # Ensure CSV has the expected format
-            header = next(reader, None)  # Read the header row
+            header = next(reader, None)
             if header is None:
                 raise ValueError("The CSV file is empty or does not have a header row.")
 
@@ -183,10 +178,9 @@ def get_preferences_from_csv(file_path):
                 raise ValueError("The CSV file must have columns labeled 'movie' and 'rating'.")
 
             print("File has a proper structure. Collecting data...")
-            # Use movie_idx and rating_idx later in the function
             for row in reader:
-                if len(row) <= max(movie_idx, rating_idx):  # Ensure the row has enough columns
-                    continue  # Skip rows with missing data
+                if len(row) <= max(movie_idx, rating_idx):
+                    continue
 
                 movie = row[movie_idx]
                 score_str = row[rating_idx]
@@ -377,7 +371,7 @@ def generate_movie_html(movie_titles, output_file="movies.html"):
     """
 
     ia = Cinemagoer()
-    for title in movie_titles[0]:  # 0-GOOD  1-BAD
+    for title in movie_titles[0]:  # 0-GOOD
         try:
             movie = ia.search_movie(title[0])[0]
 
@@ -404,7 +398,7 @@ def generate_movie_html(movie_titles, output_file="movies.html"):
 
     <div class="movie-container">
     """
-    for title in movie_titles[1]:  # 0-GOOD  1-BAD
+    for title in movie_titles[1]:  # 1-BAD
         try:
             movie = ia.search_movie(title[0])[0]
 
