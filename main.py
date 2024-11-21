@@ -74,8 +74,10 @@ def recommend_based_on_users(preferences, top_n=5):
     :param preferences: A dictionary of movie titles and normalized ratings provided by the new user.
     :param top_n: The number of top recommended and worst recommended movies to return (default is 5).
     :returns: A tuple containing two lists:
-              - top_n_best: A list of the top N recommended movies.
-              - top_n_worst: A list of the top N movies the user should avoid based on recommendations.
+              - top_n_best_cosine: A list of the top N recommended movies based on cosine similarity.
+              - top_n_worst_cosine: A list of the top N worst recommended movies based on cosine similarity.
+              - top_n_best_euclid: A list of the top N recommended movies based on Euclidean similarity.
+              - top_n_worst_euclid: A list of the top N worst recommended movies based on Euclidean similarity.
     """
     new_user_vector = pd.DataFrame([preferences], columns=user_movie_matrix.columns).fillna(0)
 
@@ -120,25 +122,43 @@ def recommend_based_on_users(preferences, top_n=5):
     print("\nEuclidean Similarity between new user and other users:")
     print(similar_users_euclidean)  # Display all Euclidean similarities
 
-    recommendations = {}
+    recommendations_cosine = {}
+    recommendations_euclid = {}
 
-    # Generate recommendations based on cosine similarities
+    # I. Generate recommendations based on cosine similarities
     for similar_user, cosine_sim_value in similar_users_cosine.items():
         user_ratings = user_movie_matrix.loc[similar_user]
 
         for movie, score in user_ratings.items():
             if movie not in preferences and score > 0:
-                recommendations[movie] = recommendations.get(movie, 0) + cosine_sim_value * score
+                recommendations_cosine[movie] = recommendations_cosine.get(movie, 0) + cosine_sim_value * score
 
-        if len(recommendations) >= top_n * 2:
+        if len(recommendations_cosine) >= top_n * 2:
             break
 
-    sorted_recommendations = sorted(recommendations.items(), key=lambda x: x[1], reverse=True)
+    sorted_recommendations_cosine = sorted(recommendations_cosine.items(), key=lambda x: x[1], reverse=True)
 
-    top_n_best = sorted_recommendations[:top_n]
-    top_n_worst = sorted_recommendations[-top_n:]
+    top_n_best_cosine = sorted_recommendations_cosine[:top_n]
+    top_n_worst_cosine = sorted_recommendations_cosine[-top_n:]
 
-    return (top_n_best, top_n_worst)
+    # II. Generate recommendations based on Euclidean similarities
+    for similar_user, euclid_sim_value in similar_users_euclidean.items():
+        user_ratings = user_movie_matrix.loc[similar_user]
+
+        for movie, score in user_ratings.items():
+            if movie not in preferences and score > 0:
+                recommendations_euclid[movie] = recommendations_euclid.get(movie, 0) + euclid_sim_value * score
+
+        if len(recommendations_euclid) >= top_n * 2:
+            break
+
+    sorted_recommendations_euclid = sorted(recommendations_euclid.items(), key=lambda x: x[1], reverse=True)
+
+    top_n_best_euclid = sorted_recommendations_euclid[:top_n]
+    top_n_worst_euclid = sorted_recommendations_euclid[-top_n:]
+
+    return (top_n_best_cosine, top_n_worst_cosine, top_n_best_euclid, top_n_worst_euclid)
+
 
 
 def get_preferences_from_csv(file_path):
@@ -366,12 +386,39 @@ def generate_movie_html(movie_titles, output_file="movies.html"):
 
     <!-- Recommended Movies -->
     <h2>🤩 Top 5 most recommended movies for you 🤩</h2>
+    <h2> (By Cosine similarity) </h2>
 
     <div class="movie-container">
     """
 
     ia = Cinemagoer()
-    for title in movie_titles[0]:  # 0-GOOD
+    for title in movie_titles[0]:  # 0-GOOD/Cosine
+        try:
+            movie = ia.search_movie(title[0])[0]
+
+            movie_info = ia.get_movie(movie.movieID)
+            movie_title = movie_info.get('title', 'Unknown Title')
+            movie_genres = ", ".join(movie_info.get('genres', []))
+            movie_plot = movie_info.get('plot', ['No description available'])[0]
+            movie_poster = movie_info.get('cover url', '')
+
+            html_content += f"""
+            <div class="movie">
+                <h3>{movie_title}</h3>
+                <img src="{movie_poster}" alt="{movie_title}">
+                <p class="tags">Genres: {movie_genres}</p>
+                <p>{movie_plot}</p>
+            </div>
+            """
+        except Exception as e:
+            print(f"Error fetching data for '{title[0]}': {e}")
+
+    html_content +="""
+    </div>
+    <h2> (By Euclid similarity) </h2>
+    <div class="movie-container">
+    """
+    for title in movie_titles[2]:  # 0-GOOD/Euclid
         try:
             movie = ia.search_movie(title[0])[0]
 
@@ -393,12 +440,37 @@ def generate_movie_html(movie_titles, output_file="movies.html"):
             print(f"Error fetching data for '{title[0]}': {e}")
 
     html_content += """
-        </div>
-     <h2>🤢 Top 5 worst movies for you 🤢</h2>
-
+    </div>
+    <h2>🤢 Top 5 worst movies for you 🤢</h2>
+    <h2> (By Cosine similarity) </h2>
     <div class="movie-container">
     """
-    for title in movie_titles[1]:  # 1-BAD
+    for title in movie_titles[1]:  # 1-BAD/Cosine
+        try:
+            movie = ia.search_movie(title[0])[0]
+
+            movie_info = ia.get_movie(movie.movieID)
+            movie_title = movie_info.get('title', 'Unknown Title')
+            movie_genres = ", ".join(movie_info.get('genres', []))
+            movie_plot = movie_info.get('plot', ['No description available'])[0]
+            movie_poster = movie_info.get('cover url', '')
+
+            html_content += f"""
+            <div class="movie">
+                <h3>{movie_title}</h3>
+                <img src="{movie_poster}" alt="{movie_title}">
+                <p class="tags">Genres: {movie_genres}</p>
+                <p>{movie_plot}</p>
+            </div>
+            """
+        except Exception as e:
+            print(f"Error fetching data for '{title[0]}': {e}")
+    html_content +="""
+    </div>
+    <h2> (By Euclid similarity) </h2>
+    <div class="movie-container">
+    """
+    for title in movie_titles[3]:  # 1-BAD/Euclid
         try:
             movie = ia.search_movie(title[0])[0]
 

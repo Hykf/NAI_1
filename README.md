@@ -30,18 +30,26 @@ In both cases, the engine will analyze the input data and correlate them with th
 ![img_4.png](img_4.png)
 ![img_5.png](img_5.png)
 ![img_6.png](img_6.png)
-> Improved UI includes some CSS animated elements and AI generated logo for the application.
+> _Improved UI includes some CSS animated elements and AI generated logo for the application._
 
 ### Similarity scores
 #### Similarity metrics calculated for random User ratings set:
 ![img_8.png](img_8.png)
 ![img_9.png](img_9.png)
-> For users with no common ratings, the similarity is 0.
+> _For users with no common ratings, the similarity is 0._
 
 #### Similiarity metrics calculated for Professor's scores set:
 ![img_10.png](img_10.png)
 ![img_11.png](img_11.png)
-> We can see that there is the biggest similarity for the original user's ratings which confirms that the algorithm works (somewhat) as expected. 
+> _We can see that there is the biggest similarity for the original user's ratings which confirms that the algorithm works (somewhat) as expected._ 
+
+### Similarity in UI - professor's recommendations
+![img_13.png](img_13.png)
+![img_14.png](img_14.png)
+![img_15.png](img_15.png)
+![img_16.png](img_16.png)
+![img_17.png](img_17.png)
+> _Here we can see that difference in results obtained from the use of both methods of similarity comparison yields different movie recommendations for the same input dataset (in this case, Professor's movie ratings)_
 
 ## Checkpoints before sending next homework
 - [x] Create recommendation engine.
