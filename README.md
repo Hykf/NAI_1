@@ -17,12 +17,12 @@ Paweł Mechliński - lead data analyst, junior UI Engineer & technical writer as
 - [x] Create recommendation engine.
 - [x] Suggest top 5 & 5 worst recommendations for the user.
 - [x] Include file with data used for training the engine.
-- [ ] No commented code.
-- [ ] Don't push .idea env files.
+- [x] No commented code.
+- [x] Don't push .idea env files.
 - [x] Include requirements.txt (imported from the PyCharm).
 - [ ] Keep langauge consistency - all vars, comments etc. in English.
 - [x] Keep all exercises in one repository (use different branches).
-- [ ] Add screenshot from the run of the project.
+- [x] Add screenshot from the run of the project.
 
 ## Screenshots
 ![img.png](img.png)

@@ -7,17 +7,40 @@ import sys
 import os
 
 
-def validate_input():
-    if len(sys.argv) == 1:
-        # Case 0: No parameters - expect console input
-        return runWithConsoleInput()
-    elif len(sys.argv) == 2:
-        # Case 1: One parameter - treat as .csv filename
-        return runWithFileInput()
-    else:
-        raise ValueError("Output contains more than one parameter, which is not allowed.")
-
 def get_user_preferences():
+    """
+    Collects user preferences for movies and their ratings via console input.
+
+    This function prompts the user to input their favorite movies along with a
+    rating (on a scale from 1 to 10). The process continues until the user types
+    'end'. Ratings are normalized to a scale of 0.0 to 1.0 for further processing.
+
+    **Workflow**:
+    - Prompts the user to input a movie name.
+    - For each movie, asks for a rating between 1 and 10.
+    - Normalizes the rating to a scale of 0.0 to 1.0 using the formula:
+      `(rating - 1) / 9`.
+    - Adds the movie and its normalized rating to a dictionary.
+
+    **Special Instructions**:
+    - Users are encouraged to use the original English titles of the movies.
+    - For foreign-language movies, the original title is preferred.
+
+    :raises ValueError: If the rating is not a number or is outside the 1-10 range.
+    :returns: A dictionary with movie titles as keys and normalized ratings as values.
+
+    Example:
+        >>> get_user_preferences()
+        Enter your preferences (movie and rating)!
+        Type 'end' to finish entering your preferences.
+        Enter movie name: Inception
+        Enter rating for the movie 'Inception' (1 - 10): 9
+        Enter movie name: Parasite
+        Enter rating for the movie 'Parasite' (1 - 10): 8
+        Enter movie name: end
+
+        Returns: {'Inception': 0.8888888888888888, 'Parasite': 0.7777777777777778}
+    """
     preferences = {}
     print("Enter your preferences (movie and rating)!")
     print("Type 'end' to finish entering your preferences.")
@@ -40,14 +63,56 @@ def get_user_preferences():
     return preferences
 
 
+def recommend_based_on_users(preferences, top_n=5):
+    """
+    Recommends movies based on user preferences by calculating similarities with other users.
+
+    The function computes cosine similarities between the new user's preferences and all existing users,
+    and generates recommendations by considering movies rated highly by similar users that the new user has not rated.
+
+    :param preferences: A dictionary of movie titles and normalized ratings provided by the new user.
+    :param top_n: The number of top recommended and worst recommended movies to return (default is 5).
+    :returns: A tuple containing two lists:
+              - top_n_best: A list of the top N recommended movies.
+              - top_n_worst: A list of the top N movies the user should avoid based on recommendations.
+    """
+    new_user_vector = pd.DataFrame([preferences], columns=user_movie_matrix.columns).fillna(0)
+    extended_matrix = pd.concat([user_movie_matrix, new_user_vector], ignore_index=True)
+    extended_similarity = cosine_similarity(extended_matrix)
+    new_user_similarities = extended_similarity[-1][:-1]
+    similar_users = pd.Series(new_user_similarities, index=user_movie_matrix.index).sort_values(ascending=False)
+
+    recommendations = {}
+    for similar_user, similarity in similar_users.items():
+        user_ratings = user_movie_matrix.loc[similar_user]
+
+        for movie, score in user_ratings.items():
+            if movie not in preferences and score > 0:
+                recommendations[movie] = recommendations.get(movie, 0) + similarity * score
+
+        if len(recommendations) >= top_n * 2:
+            break
+
+    sorted_recommendations = sorted(recommendations.items(), key=lambda x: x[1], reverse=True)
+
+    top_n_best = sorted_recommendations[:top_n]
+
+    top_n_worst = sorted_recommendations[-top_n:]
+
+    return (top_n_best, top_n_worst)
+
+
 def get_preferences_from_csv(file_path):
     """
-    Reads user preferences from a CSV file if it exists in the same directory
-    and is in CSV format. Validates the file and processes preferences.
+    Reads user preferences from a CSV file and processes them.
+
+    The file must contain columns labeled 'movie' and 'rating', which can appear in any order.
+    Ratings are normalized to a 0.0 to 1.0 scale. Invalid rows are skipped.
 
     :param file_path: Path to the CSV file.
-    :raises ValueError: If the file does not exist, is not a CSV, or has invalid content.
-    :returns: A dictionary of preferences (movie names and normalized scores).
+    :raises FileNotFoundError: If the file does not exist.
+    :raises ValueError: If the file is not a CSV or lacks the required columns.
+    :returns: A dictionary with movie titles as keys and normalized ratings as values.
     """
     # Check if the file exists in the same directory
     if not os.path.isfile(file_path):
@@ -58,6 +123,7 @@ def get_preferences_from_csv(file_path):
         raise ValueError(f"The file '{file_path}' is not a CSV file.")
 
     preferences = {}
+    print("Input looks like a proper file. Trying to read it...")
 
     try:
         # Read data from the CSV file
@@ -76,6 +142,7 @@ def get_preferences_from_csv(file_path):
             except ValueError:
                 raise ValueError("The CSV file must have columns labeled 'movie' and 'rating'.")
 
+            print("File has a proper structure. Collecting data...")
             # Use movie_idx and rating_idx later in the function
             for row in reader:
                 if len(row) <= max(movie_idx, rating_idx):  # Ensure the row has enough columns
@@ -90,6 +157,7 @@ def get_preferences_from_csv(file_path):
                     preferences[movie] = normalized_score
                 except ValueError:
                     print(f"Invalid rating '{score_str}' for movie '{movie}'. Skipping this entry.")
+        print("Data gathered successfully from the file!")
 
 
     except Exception as e:
@@ -98,6 +166,17 @@ def get_preferences_from_csv(file_path):
     return preferences
 
 def generate_movie_html(movie_titles, output_file="movies.html"):
+    """
+    Generates an HTML file displaying details of movies grouped into two categories:
+    recommended movies and movies to avoid.
+
+    :param movie_titles: A tuple containing two lists:
+                         - [0]: List of recommended movie titles (to include as "Top 5 most recommended movies").
+                         - [1]: List of movies to avoid (to include as "Top 5 movies you should avoid").
+    :param output_file: The name of the output HTML file (default is "movies.html").
+    :raises Exception: If there is an error fetching data for a movie.
+    :returns: None. Writes an HTML file and opens it in the default web browser.
+    """
     html_content = """
     <!DOCTYPE html>
     <html lang="en">
@@ -216,33 +295,6 @@ def generate_movie_html(movie_titles, output_file="movies.html"):
     webbrowser.open("movies.html")
 
 
-def recommend_based_on_users(preferences, top_n=5):
-    new_user_vector = pd.DataFrame([preferences], columns=user_movie_matrix.columns).fillna(0)
-    extended_matrix = pd.concat([user_movie_matrix, new_user_vector], ignore_index=True)
-    extended_similarity = cosine_similarity(extended_matrix)
-    new_user_similarities = extended_similarity[-1][:-1]
-    similar_users = pd.Series(new_user_similarities, index=user_movie_matrix.index).sort_values(ascending=False)
-
-    recommendations = {}
-    for similar_user, similarity in similar_users.items():
-        user_ratings = user_movie_matrix.loc[similar_user]
-
-        for movie, score in user_ratings.items():
-            if movie not in preferences and score > 0:
-                recommendations[movie] = recommendations.get(movie, 0) + similarity * score
-
-        if len(recommendations) >= top_n * 2:
-            break
-
-    sorted_recommendations = sorted(recommendations.items(), key=lambda x: x[1], reverse=True)
-
-    top_n_best = sorted_recommendations[:top_n]
-
-    top_n_worst = sorted_recommendations[-top_n:]
-
-    return (top_n_best, top_n_worst)
-
-
 ####################
 if len(sys.argv) == 1:
     print("No input parameter detected! Fill user data first so you can get you recommendations!")
@@ -253,6 +305,7 @@ elif len(sys.argv) == 2:
 else:
     raise ValueError("Output contains more than one parameter, which is not allowed.")
 
+print("Starting data analysis based on the recommendation database...")
 data = pd.read_csv("movies.csv")
 user_movie_matrix = data.pivot_table(index='Name', columns='Movie', values='Score')
 user_movie_matrix.fillna(0, inplace=True)
@@ -260,4 +313,5 @@ user_similarity_matrix = cosine_similarity(user_movie_matrix)
 user_similarity_df = pd.DataFrame(user_similarity_matrix, index=user_movie_matrix.index,
                                     columns=user_movie_matrix.index)
 
+print("Generating recommendations...")
 generate_movie_html(recommend_based_on_users(preferences))
