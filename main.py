@@ -178,63 +178,153 @@ def generate_movie_html(movie_titles, output_file="movies.html"):
     :returns: None. Writes an HTML file and opens it in the default web browser.
     """
     html_content = """
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Movies</title>
-        <style>
-        
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f4f4f9;
-                margin: 0;
-                padding: 20px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-            .movie {
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                padding: 15px;
-                margin: 10px 0;
-                background-color: #fff;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-                width: 80%;
-                max-width: 600px;
-                text-align: center;
-            }
-            .movie img {
-                max-width: 100%;
-                height: auto;
-                display: block;
-                margin: 0 auto 10px;
-            }
-            .movie h2 {
-                margin: 0 0 10px;
-                font-size: 1.5em;
-                color: #333;
-                text-align: center;
-            }
-            .movie p {
-                margin: 5px 0;
-                color: #555;
-                text-align: center;
-            }
-            .movie .tags {
-                margin: 5px 0;
-                color: #555;
-                text-align: center;
-            }
-            
-        </style>
-    </head>
-    <body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <style>
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #ff4500;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .back-to-top:hover {
+            background-color: #ff6347;
+        }
+
+        /* Global Body Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+            background-size: 400% 400%;
+            animation: gradientShift 10s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Header Styles */
+        h1, h2 {
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        /* Movie Container (Grid Layout) */
+        .movie-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        /* Movie Card Styles */
+        .movie {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .movie:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .movie img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 10px;
+        }
+
+        .movie .tags {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        /* Emoji Hover Animation */
+        header emoji {
+            display: inline-block;
+            animation: emojiAnimation 1s infinite;
+        }
+
+        @keyframes emojiAnimation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        footer a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Image Scaling */
+        img {
+            max-height: 30vh; /* 30% of the viewport height */
+            width: auto; /* Maintain aspect ratio */
+            object-fit: contain; /* Ensure the image fits without distortion */
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Logo -->
+    <img src="logo2.webp" alt="Logo of the app">
     
-    <h1>Movie Details</h1>
-    <h2>Top 5 most recommended movies:</h2>
+    <!-- Main Title -->
+    <h1>🎬 Your Movies Wrapped 🎬</h1>
+
+    <!-- Recommended Movies -->
+    <h2>🤩 Top 5 most recommended movies for you 🤩</h2>
+
+    <div class="movie-container">
     """
 
     ia = Cinemagoer()
@@ -260,7 +350,10 @@ def generate_movie_html(movie_titles, output_file="movies.html"):
             print(f"Error fetching data for '{title[0]}': {e}")
 
     html_content += """
-    <h2>Top 5 of movies you should avoid:</h2>
+        </div>
+     <h2>🤢 Top 5 worst movies for you 🤢</h2>
+
+    <div class="movie-container">
     """
     for title in movie_titles[1]:  # 0-GOOD  1-BAD
         try:
@@ -284,6 +377,15 @@ def generate_movie_html(movie_titles, output_file="movies.html"):
             print(f"Error fetching data for '{title[0]}': {e}")
 
     html_content += """
+ </div>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-content">
+            <p>Contact us at: <a href="mailto:mechlinski.pawel@gmail.com">mechlinski.pawel@gmail.com</a></p>
+            <p>Follow us on <a href="https://github.com/Hykf/NAI_2024-2025/tree/NAI_3">GitHub</a></p>
+        </div>
+    </footer>
     </body>
     </html>
     """
