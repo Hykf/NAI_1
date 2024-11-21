@@ -208,14 +208,14 @@ def generate_movie_html(movie_titles, output_file="movies.html"):
 
         /* Global Body Styles */
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f4f4f9;
+            font-family: Arial, sans-serif;
+            background-color: #2e2e2e; /* Dark background */
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+            background: linear-gradient(45deg, #2e2e2e, #333333); /* Darker gradient */
             background-size: 400% 400%;
             animation: gradientShift 10s ease infinite;
         }
@@ -228,6 +228,15 @@ def generate_movie_html(movie_titles, output_file="movies.html"):
 
         /* Header Styles */
         h1, h2 {
+            font-family: 'Poppins', sans-serif;
+            color: #ffffff; 
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);            
+            text-align: center;
+        }
+        
+        h3 {
             font-family: 'Poppins', sans-serif;
             color: #333;
             font-weight: 600;
@@ -246,7 +255,7 @@ def generate_movie_html(movie_titles, output_file="movies.html"):
 
         /* Movie Card Styles */
         .movie {
-            border: 1px solid #ccc;
+            border: 1px solid #444;            
             border-radius: 5px;
             padding: 15px;
             margin: 10px 0;
@@ -260,7 +269,7 @@ def generate_movie_html(movie_titles, output_file="movies.html"):
 
         .movie:hover {
             transform: scale(1.05);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
         }
 
         .movie img {
@@ -289,7 +298,7 @@ def generate_movie_html(movie_titles, output_file="movies.html"):
 
         /* Footer Styles */
         footer {
-            background-color: #333;
+            background-color: #222;
             color: white;
             text-align: center;
             padding: 20px;
@@ -340,7 +349,7 @@ def generate_movie_html(movie_titles, output_file="movies.html"):
 
             html_content += f"""
             <div class="movie">
-                <h2>{movie_title}</h2>
+                <h3>{movie_title}</h3>
                 <img src="{movie_poster}" alt="{movie_title}">
                 <p class="tags">Genres: {movie_genres}</p>
                 <p>{movie_plot}</p>
@@ -367,7 +376,7 @@ def generate_movie_html(movie_titles, output_file="movies.html"):
 
             html_content += f"""
             <div class="movie">
-                <h2>{movie_title}</h2>
+                <h3>{movie_title}</h3>
                 <img src="{movie_poster}" alt="{movie_title}">
                 <p class="tags">Genres: {movie_genres}</p>
                 <p>{movie_plot}</p>

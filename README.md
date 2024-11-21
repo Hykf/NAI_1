@@ -18,10 +18,19 @@ There are two ways one interact with the application:
 In both cases, the engine will analyze the input data and correlate them with the training database to provide best and worst movie recommendations.
 
 ## Screenshots
+
+### Early tests
 ![img.png](img.png)
 ![img_1.png](img_1.png)
 ![img_2.png](img_2.png)
 
+### Improved UI
+![img_3.png](img_3.png)
+![img_4.png](img_4.png)
+![img_5.png](img_5.png)
+![img_6.png](img_6.png)
+
+_(Screenshots picture the UI evolution, but at the stage of frontend design, there were no changes made in the recommendation engine itself - so the differences are purely cosmetic)_
 
 ## Checkpoints before sending next homework
 - [x] Create recommendation engine.
